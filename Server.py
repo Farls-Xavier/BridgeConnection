@@ -6,17 +6,23 @@ data_store = {}
 @app.route("/send_data", methods=["GET"])
 def send_data():
     client_id = request.args.get("client_id")
-    data = request.args.get("data")
     userId = request.args.get("userId")
+    command = request.args.get("command")
+    argument1 = request.args.get("argument1")
+    argument2 = request.args.get("argument2")
 
-    if client_id and data and userId:
+    if client_id and userId and command and argument1 and argument2:
         if client_id not in data_store:
             data_store[client_id] = {}
         if userId not in data_store[client_id]:
             data_store[client_id][userId] = []
-        data_store[client_id][userId].append(data)       
-        print(f"Data received - client_id: {client_id}, userId: {userId}, data: {data}")
-        return jsonify({"status": "success"})   
+        data_store[client_id][userId].append({
+            "command": command,
+            "argument1": argument1,
+            "argument2": argument2
+        })
+        print(f"Data received - client_id: {client_id}, userId: {userId}, command: {command}, arg1: {argument1}, arg2: {argument2}")
+        return jsonify({"status": "success"})
     return jsonify({"status": "error", "message": "Missing params"})
 
 @app.route("/get_data", methods=["GET"])
